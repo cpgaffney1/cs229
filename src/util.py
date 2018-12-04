@@ -7,6 +7,8 @@ matplotlib.use('agg')
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
 
+classes = np.asarray(list(range(1,6)))
+K = 10
 
 def get_country_mapping():
     # returns mapping of country code to name
@@ -19,14 +21,13 @@ def get_country_mapping():
     return codes_to_names
 
 def dumpVar(filename, obj):
-	with open(filename, 'wb') as f:
-		pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
+    with open(filename, 'wb') as f:
+        pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
 
 def openPkl(filename):
-	var = open(filename, "rb")
-	return pickle.load(var)
+    var = open(filename, "rb")
+    return pickle.load(var)
 
-classes = np.asarray(list(range(1,6)))
 
 def outputConfusionMatrix(pred, labels, filename):
     """ Generate a confusion matrix """
