@@ -6,6 +6,7 @@ import matplotlib
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
+import snap
 
 classes = np.asarray(list(range(1,6)))
 K = 10
@@ -48,4 +49,12 @@ def outputConfusionMatrix(pred, labels, filename):
     plt.tight_layout()
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
-    plt.savefig(filename)   
+    plt.savefig(filename)  
+
+
+def load_alliance_graph(year):
+    assert(year >= 1816)
+    assert(year <= 2012)
+    G = snap.TUNGraph.Load(snap.TFIn('data/alliances/alliances{}.graph'.format(year)))
+    return G
+    
