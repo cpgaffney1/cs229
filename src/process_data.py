@@ -11,14 +11,10 @@ y_label_columns = [outcome_column_num, hostlev_column_num]
 
 
 # FILL IN CSV FILENAME LATER
-data = np.genfromtxt("../data/data_not_final.csv", dtype=float, delimiter=',', skip_header=1)[:, 1:]
+data = np.genfromtxt("../../data_not_final.csv", dtype=float, delimiter=',', skip_header=1)[:, 1:]
 
 # remap labels --> victory = 1, yield = 2, compromise = 3, stalemate = 4, other = 5
-
-# keep index dict to take random subset of larger classes
-class_four = []
-
-for i, row in data:
+for i, row in enumerate(data):
 	# victory	
 	if row[outcome_column_num] == 1 or row[outcome_column_num] == 2:
 		data[i][outcome_column_num] = 1
@@ -31,20 +27,19 @@ for i, row in data:
 	# stalemate
 	elif row[outcome_column_num] == 5:
 		data[i][outcome_column_num] = 4	
-		class_four.append(i)
 	# other
 	else:
 		data[i][outcome_column_num] = 5
 
 y = data[:, y_label_columns]
-X = np.delete(X, y_label_columns, axis=1)
+X = np.delete(data, y_label_columns, axis=1)
 
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=True)
 
 
-util.dumpVar("../data/X_train", X_train)
-util.dumpVar("../data/y_train", y_train)
+util.dumpVar("../../X_train_temp", X_train)
+util.dumpVar("../../y_train_temp", y_train)
 
-util.dumpVar("../data/X_test", X_test)
-util.dumpVar("../data/y_test", y_test)
+util.dumpVar("../../X_test_temp", X_test)
+util.dumpVar("../../y_test_temp", y_test)
