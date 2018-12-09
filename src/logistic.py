@@ -5,58 +5,70 @@ from sklearn.metrics import accuracy_score
 from sklearn.linear_model import LogisticRegression
 
 
-y_label_index = util.outcome_col_index
+if __name__ == '__main__':	
+	X_train = util.openPkl("../../X_train_temp")
+	y_train = util.openPkl("../../y_train_temp")[:, y_label_index] 
+	
+	trainAndSaveModel(X_train, y_train, util.outcome_col_index, max_iterations=50)
+	examineModel(X_train, y_train)
 
-X_train = util.openPkl("../../X_train_temp")
-y_train = util.openPkl("../../y_train_temp")[:, y_label_index] 
 
-n_features = X_train.shape[1]
-n_classes = len(util.classes)
+def trainAndSaveModel(X_train, y_train, y_label_index, max_iterations=7000):
 
-avg_coefficients = np.zeros((n_classes, n_features))
-avg_intercepts = np.zeros(n_classes)
+	n_features = X_train.shape[1]
+	n_classes = len(util.classes)
 
-data_kfold = util.split_data(y_index=y_label_index)
-train_accuracies = []
-eval_accuracies = []
-train_predictions = []
-eval_predictions = []
+	avg_coefficients = np.zeros((n_classes, n_features))
+	avg_intercepts = np.zeros(n_classes)
 
-for i, (X_train, y_train, X_val, y_val) in enumerate(data_kfold):
-	print("Fold", i+1)
-	clf = LogisticRegression(max_iter=5000, multi_class= 'multinomial', solver= 'newton-cg')
-	clf.fit(X_train, y_train)
-	train_acc = clf.score(X_train, y_train)
-	train_accuracies.append(train_acc)
-	eval_acc = clf.score(X_val, y_val)
-	eval_accuracies.append(eval_acc)
-	avg_coefficients += clf.coef_
-	avg_intercepts += clf.intercept_
-	train_predictions.append(clf.predict(X_train))
-	eval_predictions.append(clf.predict(X_val))
+	data_kfold = util.split_data(y_index=y_label_index)
+	train_accuracies = []
+	eval_accuracies = []
+	train_predictions = []
+	eval_predictions = []
 
-	print("train accuracy:", train_acc)
-	print("eval accuracy:", eval_acc)
+	for i, (X_train, y_train, X_val, y_val) in enumerate(data_kfold):
+		print("Fold", i+1)
+		clf = LogisticRegression(max_iter=max_iterations, multi_class= 'multinomial', solver= 'newton-cg')
+		clf.fit(X_train, y_train)
+		train_acc = clf.score(X_train, y_train)
+		train_accuracies.append(train_acc)
+		eval_acc = clf.score(X_val, y_val)
+		eval_accuracies.append(eval_acc)
+		avg_coefficients += clf.coef_
+		avg_intercepts += clf.intercept_
+		train_predictions.append(clf.predict(X_train))
+		eval_predictions.append(clf.predict(X_val))
 
-avg_coefficients /= util.K
-avg_intercepts /= util.K 
-model = {
-	"coeff_": avg_coefficients,
-	"intercept_": avg_intercepts,
-	"train_accuracies": train_accuracies,
-	"eval_accuracies": eval_accuracies,
-	"train_predictions": train_predictions,
-	"eval_predictions": eval_predictions
-}
+		print("train accuracy:", train_acc)
+		print("eval accuracy:", eval_acc)
 
-util.dumpVar("avg_logistic_model", model)
+	avg_coefficients /= util.K
+	avg_intercepts /= util.K 
+	model = {
+		"coeff_": avg_coefficients,
+		"intercept_": avg_intercepts,
+		"train_accuracies": train_accuracies,
+		"eval_accuracies": eval_accuracies,
+		"train_predictions": train_predictions,
+		"eval_predictions": eval_predictions
+	}
 
-# model = util.openPkl("logistic_model")
-# avg_coefficients = model['coeff_']
-# avg_intercepts = model['intercept_']
+	util.dumpVar("../models/avg_logistic_model", model)
 
-clf = LogisticRegression()
-clf.coef_ = avg_coefficients
-clf.intercept_ = avg_intercepts
-clf.classes_ = util.classes
-print("Averaged model train accuracy:", clf.score(X_train, y_train))
+
+
+def examineModel(X_train, y_train):
+
+	model = util.openPkl("../models/avg_logistic_model")
+	avg_coefficients = model['coeff_']
+	avg_intercepts = model['intercept_']
+
+	clf = LogisticRegression()
+	clf.coef_ = avg_coefficients
+	clf.intercept_ = avg_intercepts
+	clf.classes_ = util.classes
+	print("Averaged model train accuracy:", clf.score(X_train, y_train))
+	avg_preds = clf.predict(X_train)
+	util.outputConfusionMatrix(avg_preds, y_train, "../figures/avg_logistic.png")
+
