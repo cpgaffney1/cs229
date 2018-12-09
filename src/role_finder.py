@@ -63,6 +63,8 @@ for year in range(1816, 2012 + 1):
     graph = util.load_alliance_graph(year)
     features = collect_features(graph)
     features = collect_recursive_features(graph, features, k=1)
+    for key in features:
+        features[key] = [features[key][i] for i in range(len(features[key]))]
     with open('data/alliance_features/features{}.pickle'.format(year), 'wb') as of:
         pickle.dump(features, of)
    
