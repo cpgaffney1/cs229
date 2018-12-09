@@ -26,7 +26,7 @@ def openPkl(filename):
 	var = open(filename, "rb")
 	return pickle.load(var)
 
-classes = np.asarray(list(range(1,6)))
+outcome_classes = np.asarray(list(range(1,6)))
 
 def outputConfusionMatrix(pred, labels, filename):
     """ Generate a confusion matrix """

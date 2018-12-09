@@ -16,7 +16,7 @@ def load_data():
 
 def filter_data(data):
     drop_cols = ['dispnum3', 'styear', 'endyear', 'a_styear', 'a_endyear', 'b_styear', 
-        'b_endyear', 'war_names', 'a_revtype2', 'b_revtype2']
+        'b_endyear', 'war_names', 'a_revtype2', 'b_revtype2', 'a_ccode', 'b_ccode']
     filtered_data = data.drop(drop_cols, axis=1)
     return filtered_data
     
@@ -85,6 +85,18 @@ def plot_wars(x, war_names):
     plt.show()
     plt.clf()
     
+def plot_usa(x, is_usa):
+    assert(x.shape[1] == 2)
+    fig, ax = plt.subplots()
+    colors = ['b' if is_usa[i] else 'k' for i in range(len(is_usa))]
+    sizes = [10 if is_usa[i] else 1 for i in range(len(is_usa))]
+    #plt.xscale('symlog')
+    #plt.yscale('symlog')
+    ax.scatter(x[:, 0], x[:, 1], c=colors, s=sizes)
+        
+    plt.show()
+    plt.clf()
+    
     
 def plot_year_pca(x, years):
     assert(len(x) == len(years))
@@ -99,7 +111,11 @@ def plot_year_pca(x, years):
     
 
 data = load_data()
+a_is_usa = (data['a_ccode'].as_matrix() == 2)
+b_is_usa = (data['b_ccode'].as_matrix() == 2)
 filtered_data = filter_data(data)
+is_usa = np.logical_or(a_is_usa, b_is_usa)
+print(is_usa)
 x = filtered_data.as_matrix()
 years = data['styear'].as_matrix()
 x = np.log(x + 10)
@@ -118,7 +134,9 @@ x = pca.transform(x)
 
 plot_clusters(x, clusters)
 plot_year_pca(x, years)
+plot_usa(x, is_usa)
 plot_wars(x, data['war_names'])
+
 
 
 
