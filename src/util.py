@@ -79,8 +79,9 @@ def load_alliance_graph(year):
 
 
 def insert_alliance_features(x):
+    base_path = 'data/alliance_features/'
     all_alliance_features = {}
-    alliance_features = read_alliance_features('data/alliance_features/features{}.txt'.format(1816))
+    alliance_features = read_alliance_features(base_path + 'features{}.txt'.format(1816))
     all_alliance_features[1816] = alliance_features
     n_features = 6
     
@@ -92,11 +93,11 @@ def insert_alliance_features(x):
     a_col = 10
     b_col = 23
     for i in range(n):
-        year = x[i][year_col]
+        year = int(x[i][year_col])
         a = x[i][a_col]
         b = x[i][b_col]
         if year not in all_alliance_features:
-            all_alliance_features[year] = read_alliance_features('data/alliance_features/features{}.txt'.format(year))
+            all_alliance_features[year] = read_alliance_features(base_path + 'features{}.txt'.format(year))
         alliance_features = all_alliance_features[year]
         assert(a in alliance_features)
         assert(b in alliance_features)
@@ -104,15 +105,15 @@ def insert_alliance_features(x):
         new_x[i, x.shape[1] + n_features:] = np.array(alliance_features[b])[:n_features]
         
     return new_x
-    
+
+   
 print('TEST')    
 print(insert_alliance_features(np.array(
     [
-    [0, 1970, 0,0,0,0,0,0,0,0, 2, 0,0,0,0,0,0,0,0,0,0,0,0, 220, 0,0,0,0],
+    [0, 1970.0, 0,0,0,0,0,0,0,0, 2, 0,0,0,0,0,0,0,0,0,0,0,0, 220, 0,0,0,0],
     [0, 1975, 0,0,0,0,0,0,0,0, 2, 0,0,0,0,0,0,0,0,0,0,0,0, 220, 0,0,0,0]
     ]
 )))
-exit()     
 
 # Selects random sample of original data s.t. classes are balanced
 # Splits into K folds
