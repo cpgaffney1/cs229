@@ -135,10 +135,8 @@ def split_data(y_index=outcome_col_index):
     for index, label in enumerate(y_train):
         class_counts[label].append(index)
     assert(sum([len(class_counts[c]) for c in class_counts]) == y_train.shape[0])
-    # print(sorted(Counter(list(y_train)).items()))
-
+    
     max_num_values = min([len(class_counts[c]) for c in class_counts])
-    # print("max_num_values:", max_num_values)
     
     indices_to_delete = []
     delete_me = {c : 0 for c in classes }
@@ -149,26 +147,13 @@ def split_data(y_index=outcome_col_index):
         if num_to_delete > 0:
             indices_to_delete += list(np.random.choice(label_indices, size=num_to_delete, replace=False))
     assert(len(indices_to_delete) == sum([delete_me[label] for label in delete_me]))
-    # print("elements to delete:", len(indices_to_delete))
+
     new_X = np.delete(X_train, indices_to_delete, axis=0)
-    new_y = np.delete(y_train, indices_to_delete, axis=0)
-    # print("before:", X_train.shape)
-    # print("after:", new_X.shape)
-    # print(sorted(Counter(list(new_y)).items()))
-    
-    # new_indices = {c : [] for c in classes}
-    # for index, label in enumerate(new_y):
-    #     new_indices[label].append(index)
-    # print(new_indices)   
+    new_y = np.delete(y_train, indices_to_delete, axis=0)    
 
     # split into K blocks
     kf = KFold(n_splits=K)
     splits = []
     for train_indices, val_indices in kf.split(new_X):
         splits.append((new_X[train_indices], new_y[train_indices], new_X[val_indices], new_y[val_indices]))
-        # print((train_indices))
-        # print((val_indices))
     return splits
-
-
-

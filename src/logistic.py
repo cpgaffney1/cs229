@@ -5,16 +5,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.linear_model import LogisticRegression
 
 
-if __name__ == '__main__':	
-	X_train = util.openPkl("../../X_train_temp")
-	y_train = util.openPkl("../../y_train_temp")[:, y_label_index] 
-	
-	trainAndSaveModel(X_train, y_train, util.outcome_col_index, max_iterations=50)
-	examineModel(X_train, y_train)
-
-
-def trainAndSaveModel(X_train, y_train, y_label_index, max_iterations=7000):
-
+def trainAndSaveModel(X_train, y_train, y_label_index, max_iterations=7000, folds=False):
 	n_features = X_train.shape[1]
 	n_classes = len(util.classes)
 
@@ -39,6 +30,9 @@ def trainAndSaveModel(X_train, y_train, y_label_index, max_iterations=7000):
 		avg_intercepts += clf.intercept_
 		train_predictions.append(clf.predict(X_train))
 		eval_predictions.append(clf.predict(X_val))
+		if folds:
+			util.outputConfusionMatrix(clf.predict(X_train), y_train, "../figures/fold_" + str(i+1) + "_train")
+			util.outputConfusionMatrix(clf.predict(X_val), y_val, "../figures/fold_" + str(i+1) + "_eval")
 
 		print("train accuracy:", train_acc)
 		print("eval accuracy:", eval_acc)
@@ -59,7 +53,6 @@ def trainAndSaveModel(X_train, y_train, y_label_index, max_iterations=7000):
 
 
 def examineModel(X_train, y_train):
-
 	model = util.openPkl("../models/avg_logistic_model")
 	avg_coefficients = model['coeff_']
 	avg_intercepts = model['intercept_']
@@ -70,5 +63,15 @@ def examineModel(X_train, y_train):
 	clf.classes_ = util.classes
 	print("Averaged model train accuracy:", clf.score(X_train, y_train))
 	avg_preds = clf.predict(X_train)
-	util.outputConfusionMatrix(avg_preds, y_train, "../figures/avg_logistic.png")
+	util.outputConfusionMatrix(avg_preds, y_train, "../figures/avg_logistic.png")			
 
+
+
+if __name__ == '__main__':	
+	y_label_index = util.outcome_col_index
+
+	X_train = util.openPkl("../data/X_train")
+	y_train = util.openPkl("../data/y_train")[:, y_label_index] 
+	
+	trainAndSaveModel(X_train, y_train, y_label_index, max_iterations=5, folds=True)
+	examineModel(X_train, y_train)
