@@ -7,14 +7,27 @@ import util
 from keras.layers import Dense
 from keras.models import Sequential    
     
-def train_model(X_train, y_train, X_val, y_val):
+def train_model(X_train, y_train, X_val, y_val, size='small'):
     n_classes = len(util.outcome_classes)
     y_train = keras.utils.to_categorical(y_train, num_classes=n_classes)
     y_val = keras.utils.to_categorical(y_val, num_classes=n_classes)
 
+    if size == 'small':
+        h = 16
+    elif size == 'medium':
+        h = 32
+    elif size = 'large':
+        h = 64
+    else:
+        assert(False)
     model = Sequential()
-    model.add(Dense(32, activation='relu', input_dim=X_train.shape[1]))
+    model.add(Dense(h, activation='relu', input_dim=X_train.shape[1]))
+    if size == 'medium':
+        model.add(Dense(h, activation='relu'))
+    if size = 'large':
+        model.add(Dense(h, activation='relu'))
     model.add(Dense(n_classes, activation='softmax'))
+
     
     opt = keras.optimizers.Adam(lr=0.001)
     model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['accuracy'])
