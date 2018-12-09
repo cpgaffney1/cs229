@@ -1,17 +1,15 @@
 import util
-from sklearn.model_selection import train_test_split
 import numpy as np 
 from collections import Counter
+from sklearn.model_selection import train_test_split
 
 
-# FILL THIS IN/UPDATE ONCE DATASET IS FINALIZED
 outcome_column_num = 2
-hostlev_column_num = 4
+hostlev_column_num = 5
 y_label_columns = [outcome_column_num, hostlev_column_num]
 
 
-# FILL IN CSV FILENAME LATER
-data = np.genfromtxt("../../data_not_final.csv", dtype=float, delimiter=',', skip_header=1)[:, 1:]
+data = np.genfromtxt("../data/final_data.csv", dtype=float, delimiter=',', skip_header=1)[:, 1:]
 
 # remap labels --> victory = 1, yield = 2, compromise = 3, stalemate = 4, other = 5
 for i, row in enumerate(data):
@@ -40,8 +38,10 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle
 X_train = util.insert_alliance_features(X_train)
 X_test = util.insert_alliance_features(X_test)
 
-util.dumpVar("../../X_train_temp", X_train)
-util.dumpVar("../../y_train_temp", y_train)
+print(X_train.shape)
 
-util.dumpVar("../../X_test_temp", X_test)
-util.dumpVar("../../y_test_temp", y_test)
+util.dumpVar("../data/X_train", X_train)
+util.dumpVar("../data/y_train", y_train)
+
+util.dumpVar("../data/X_test", X_test)
+util.dumpVar("../data/y_test", y_test)
