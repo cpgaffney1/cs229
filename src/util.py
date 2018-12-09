@@ -106,7 +106,7 @@ def insert_alliance_features(x):
         
     return new_x
 
-   
+'''    
 print('TEST')    
 print(insert_alliance_features(np.array(
     [
@@ -114,6 +114,7 @@ print(insert_alliance_features(np.array(
     [0, 1975, 0,0,0,0,0,0,0,0, 2, 0,0,0,0,0,0,0,0,0,0,0,0, 220, 0,0,0,0]
     ]
 )))
+'''
 
 # Selects random sample of original data s.t. classes are balanced
 # Splits into K folds
