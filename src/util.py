@@ -32,6 +32,21 @@ def dumpVar(filename, obj):
 def openPkl(filename):
     var = open(filename, "rb")
     return pickle.load(var)
+    
+def read_alliance_features(fname):
+    features = {}
+    with open(fname) as f:
+        lines = f.readlines()
+    for line in lines:
+        sp = line.split(':')
+        key = int(sp[0])
+        features[key] = []
+        sp = sp[1].split(',')
+        for elem in sp:
+            if len(elem) > 0 and elem != '\n':
+                print(elem)
+                features[key].append(float(elem))
+    return features
 
 outcome_classes = np.asarray(list(range(1,6)))
 
@@ -56,17 +71,43 @@ def outputConfusionMatrix(pred, labels, filename):
     plt.xlabel('Predicted label')
     plt.savefig(filename)  
 
-    
-openPkl('data/alliance_features/features1816.pickle')
 
 def load_alliance_graph(year):
     assert(year >= 1816)
     assert(year <= 2012)
     G = snap.TUNGraph.Load(snap.TFIn('data/alliances/alliances{}.graph'.format(year)))
     return G
-    
 
+
+def insert_alliance_features(x):
+    all_alliance_features = {}
+    alliance_features = read_alliance_features('data/alliance_features/features{}.txt'.format(1816))
+    all_alliance_features[1816] = alliance_features
+    n_features = 6
     
+    n = x.shape[0]
+    new_x = np.zeros((n, x.shape[1] + 2 * n_features))
+    new_x[:, :x.shape[1]] = x
+    
+    year_col = 1
+    a_col = 10
+    b_col = 23
+    for i in range(n):
+        year = x[i][year_col]
+        a = x[i][a_col]
+        b = x[i][b_col]
+        if year not in all_alliance_features:
+            all_alliance_features[year] = read_alliance_features('data/alliance_features/features{}.txt'.format(year))
+        alliance_features = all_alliance_features[year]
+        assert(a in alliance_features)
+        assert(b in alliance_features)
+        new_x[i, x.shape[1] : x.shape[1] + n_features] = np.array(alliance_features[a])[:n_features]  
+        new_x[i, x.shape[1] + n_features:] = np.array(alliance_features[b])[:n_features]
+        
+    return new_x
+      
+
+        
 
 # Selects random sample of original data s.t. classes are balanced
 # Splits into K folds

@@ -37,6 +37,8 @@ X = np.delete(data, y_label_columns, axis=1)
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=True)
 
+X_train = util.insert_alliance_features(X_train)
+X_test = util.insert_alliance_features(X_test)
 
 util.dumpVar("../../X_train_temp", X_train)
 util.dumpVar("../../y_train_temp", y_train)
