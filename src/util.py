@@ -74,12 +74,12 @@ def outputConfusionMatrix(pred, labels, filename):
 def load_alliance_graph(year):
     assert(year >= 1816)
     assert(year <= 2012)
-    G = snap.TUNGraph.Load(snap.TFIn('data/alliances/alliances{}.graph'.format(year)))
+    G = snap.TUNGraph.Load(snap.TFIn('../data/alliances/alliances{}.graph'.format(year)))
     return G
 
 
 def insert_alliance_features(x):
-    base_path = 'data/alliance_features/'
+    base_path = '../data/alliance_features/'
     all_alliance_features = {}
     alliance_features = read_alliance_features(base_path + 'features{}.txt'.format(1816))
     all_alliance_features[1816] = alliance_features
@@ -89,20 +89,26 @@ def insert_alliance_features(x):
     new_x = np.zeros((n, x.shape[1] + 2 * n_features))
     new_x[:, :x.shape[1]] = x
     
-    year_col = 1
-    a_col = 10
-    b_col = 23
+    year_col = 0
+    a_col = 11
+    b_col = 24
     for i in range(n):
         year = int(x[i][year_col])
-        a = x[i][a_col]
-        b = x[i][b_col]
+        a = int(x[i][a_col])
+        b = int(x[i][b_col])
         if year not in all_alliance_features:
             all_alliance_features[year] = read_alliance_features(base_path + 'features{}.txt'.format(year))
         alliance_features = all_alliance_features[year]
-        assert(a in alliance_features)
-        assert(b in alliance_features)
-        new_x[i, x.shape[1] : x.shape[1] + n_features] = np.array(alliance_features[a])[:n_features]  
-        new_x[i, x.shape[1] + n_features:] = np.array(alliance_features[b])[:n_features]
+        if a in alliance_features:
+            ft = np.array(alliance_features[a])[:n_features]  
+        else:
+            ft = np.array([0.0] * n_features)
+        new_x[i, x.shape[1] : x.shape[1] + n_features] = ft
+        if b in alliance_features:
+            ft = np.array(alliance_features[b])[:n_features]  
+        else:
+            ft = np.array([0.0] * n_features)
+        new_x[i, x.shape[1] + n_features:] = ft
         
     return new_x
 

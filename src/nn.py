@@ -16,7 +16,7 @@ def train_model(X_train, y_train, X_val, y_val, size='small'):
         h = 16
     elif size == 'medium':
         h = 32
-    elif size = 'large':
+    elif size == 'large':
         h = 64
     else:
         assert(False)
@@ -24,7 +24,7 @@ def train_model(X_train, y_train, X_val, y_val, size='small'):
     model.add(Dense(h, activation='relu', input_dim=X_train.shape[1]))
     if size == 'medium':
         model.add(Dense(h, activation='relu'))
-    if size = 'large':
+    if size == 'large':
         model.add(Dense(h, activation='relu'))
     model.add(Dense(n_classes, activation='softmax'))
 
@@ -32,23 +32,32 @@ def train_model(X_train, y_train, X_val, y_val, size='small'):
     opt = keras.optimizers.Adam(lr=0.001)
     model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['accuracy'])
     
-    model.fit(x_train, y_train, batch_size=32, epochs=10)
+    model.fit(X_train, y_train, validation_data=(X_val, y_val), batch_size=32, epochs=10)
     score = model.evaluate(X_val, y_val)
     
     return model, score
 
+#testing
+def split_data():
+    return [(list(range(0,400)), list(range(400,500))), (list(range(500,900)), list(range(900,1000)))]
 
-data_split = util.split_indices()
-X, y = util.load_data()
+def load_data():
+    X = np.random.rand(1000, 30)
+    y = np.random.randint(1, 5, size=1000) - 1
+    return X, y
+    
+data_split = split_data()#util.split_data()
+X, y = load_data()#util.load_data()
 models = []
 scores = []
 for split in data_split:
-    xti, yti, xvi, yvi = split
-    X_train = X[xti]
-    y_train = y[yti]
-    X_val = X[xvi]
-    y_val = y[yvi]
+    ti, vi = split
+    X_train = X[ti]
+    y_train = y[ti]
+    X_val = X[vi]
+    y_val = y[vi]
     model, score = train_model(X_train, y_train, X_val, y_val)
+    print('')
     models.append(model)
     scores.append(score)
     
