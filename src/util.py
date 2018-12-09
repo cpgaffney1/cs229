@@ -44,7 +44,6 @@ def read_alliance_features(fname):
         sp = sp[1].split(',')
         for elem in sp:
             if len(elem) > 0 and elem != '\n':
-                print(elem)
                 features[key].append(float(elem))
     return features
 
@@ -105,9 +104,15 @@ def insert_alliance_features(x):
         new_x[i, x.shape[1] + n_features:] = np.array(alliance_features[b])[:n_features]
         
     return new_x
-      
-
-        
+    
+print('TEST')    
+print(insert_alliance_features(np.array(
+    [
+    [0, 1970, 0,0,0,0,0,0,0,0, 2, 0,0,0,0,0,0,0,0,0,0,0,0, 220, 0,0,0,0],
+    [0, 1975, 0,0,0,0,0,0,0,0, 2, 0,0,0,0,0,0,0,0,0,0,0,0, 220, 0,0,0,0]
+    ]
+)))
+exit()     
 
 # Selects random sample of original data s.t. classes are balanced
 # Splits into K folds
