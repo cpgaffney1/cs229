@@ -119,8 +119,8 @@ exit()
 # Defaults to using column index for outcome
 # Returns list of length K where each tuple is one fold: (X_train, y_train, X_val, y_val)
 def split_data(y_index=outcome_col_index):
-    X_train = openPkl("../../X_train_temp")
-    y_train = openPkl("../../y_train_temp")[:, y_index]
+    X_train = openPkl("../data/X_train")
+    y_train = openPkl("../data/y_train")[:, y_index]
         
     # balance dataset
     class_counts = {c : [] for c in classes }
