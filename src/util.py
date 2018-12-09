@@ -3,10 +3,8 @@ import numpy as np
 import pickle
 import itertools
 import matplotlib
-matplotlib.use('agg')
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
-import snap
 from collections import Counter
 from sklearn.model_selection import KFold
 
@@ -58,12 +56,16 @@ def outputConfusionMatrix(pred, labels, filename):
     plt.xlabel('Predicted label')
     plt.savefig(filename)  
 
+    
+openPkl('data/alliance_features/features1816.pickle')
 
 def load_alliance_graph(year):
     assert(year >= 1816)
     assert(year <= 2012)
     G = snap.TUNGraph.Load(snap.TFIn('data/alliances/alliances{}.graph'.format(year)))
     return G
+    
+
     
 
 # Selects random sample of original data s.t. classes are balanced
