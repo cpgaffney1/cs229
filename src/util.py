@@ -9,7 +9,7 @@ from collections import Counter
 from sklearn.model_selection import KFold
 
 classes = np.asarray(list(range(1,6)))
-K = 10
+K = 2
 
 # indices into y_train and y_test
 outcome_col_index = 0
