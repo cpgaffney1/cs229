@@ -73,5 +73,8 @@ if __name__ == '__main__':
 	X_train = util.openPkl("../data/X_train")
 	y_train = util.openPkl("../data/y_train")[:, y_label_index] 
 	
-	trainAndSaveModel(X_train, y_train, y_label_index, max_iterations=5, folds=True)
+	trainAndSaveModel(X_train, y_train, y_label_index, max_iterations=7000, folds=True)
 	examineModel(X_train, y_train)
+	model = util.openPkl("../models/avg_logistic_model")
+	print(np.average(model["train_accuracies"]))
+	print(np.average(model["eval_accuracies"]))
