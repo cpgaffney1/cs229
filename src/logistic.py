@@ -63,7 +63,7 @@ def examineModel(X_train, y_train):
 	clf.classes_ = util.classes
 	print("Averaged model train accuracy:", clf.score(X_train, y_train))
 	avg_preds = clf.predict(X_train)
-	util.outputConfusionMatrix(avg_preds, y_train, "../figures/avg_logistic.png")			
+	# util.outputConfusionMatrix(avg_preds, y_train, "../figures/avg_logistic.png")			
 
 
 
@@ -73,8 +73,15 @@ if __name__ == '__main__':
 	X_train = util.openPkl("../data/X_train")
 	y_train = util.openPkl("../data/y_train")[:, y_label_index] 
 	
-	trainAndSaveModel(X_train, y_train, y_label_index, max_iterations=7000, folds=True)
+	trainAndSaveModel(X_train, y_train, y_label_index, max_iterations=7000, folds=False)
 	examineModel(X_train, y_train)
 	model = util.openPkl("../models/avg_logistic_model")
 	print(np.average(model["train_accuracies"]))
 	print(np.average(model["eval_accuracies"]))
+	
+	# avg_coefficients = model["coeff_"]
+	# n_classes x n_features
+	# top_features = np.argmax(avg_coefficients, axis=1)
+	# print(top_features)
+
+
